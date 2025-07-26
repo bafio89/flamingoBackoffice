@@ -47,7 +47,7 @@ export default async function handler(
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    const spreadsheetId = '1L0_zpRrIIaoCCvvCkNl1a94CM8uL4PK1VWuXH_nWKsY';
+    const spreadsheetId = '1CTvnHvfFwccPqpGktL9MEqZ2rCvn7P1RwTROQ_Bbbw0';
 
     // Prima leggi l'header per trovare le colonne dinamicamente
     const headerResponse = await sheets.spreadsheets.values.get({
@@ -73,7 +73,7 @@ export default async function handler(
       header && header.toString().toLowerCase().includes('ingressi')
     );
     const tesseraColumnIndex = headers.findIndex((header: string) =>
-      header && header.toString().toLowerCase().includes('tessera')
+      header && header.toString().toLowerCase().includes('scegli la tua modalità di tesseramento')
     );
 
     if (uuidColumnIndex === -1) {
@@ -95,7 +95,7 @@ export default async function handler(
     if (tesseraColumnIndex === -1) {
       return res.status(500).json({
         success: false,
-        message: '🌊 Colonna Tessera non trovata nel foglio. Contatta l\'amministratore! 🌊',
+        message: '🌊 Colonna "Scegli la tua modalità di tesseramento" non trovata nel foglio. Contatta l\'amministratore! 🌊',
         isMember: false
       });
     }
@@ -112,7 +112,6 @@ export default async function handler(
 
     const uuidColumn = getColumnLetter(uuidColumnIndex);
     const ingressiColumn = getColumnLetter(ingressiColumnIndex);
-    const tesseraColumn = getColumnLetter(tesseraColumnIndex);
 
     // Trova l'indice minimo e massimo per leggere tutte le colonne necessarie
     const minColumnIndex = Math.min(uuidColumnIndex, ingressiColumnIndex, tesseraColumnIndex);
