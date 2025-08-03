@@ -47,12 +47,12 @@ export default async function handler(
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    const spreadsheetId = '1CTvnHvfFwccPqpGktL9MEqZ2rCvn7P1RwTROQ_Bbbw0';
+    const spreadsheetId = '1vJPuwdbZ-hjuPmcNdymrdg401CQUsDKjTlKOep_afus';
 
     // Prima leggi l'header per trovare le colonne dinamicamente
     const headerResponse = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: 'Risposte del modulo 1!1:1', // Leggi solo la prima riga (header)
+      range: 'Check Ingressi!1:1', // Leggi solo la prima riga (header)
     });
 
     const headerValues = headerResponse.data.values;
@@ -73,7 +73,7 @@ export default async function handler(
       header && header.toString().toLowerCase().includes('ingressi')
     );
     const tesseraColumnIndex = headers.findIndex((header: string) =>
-      header && header.toString().toLowerCase().includes('scegli la tua modalità di tesseramento')
+      header && header.toString().toLowerCase().includes('Tipo Tes')
     );
 
     if (uuidColumnIndex === -1) {
@@ -120,7 +120,7 @@ export default async function handler(
     const maxColumn = getColumnLetter(maxColumnIndex);
 
     // Ora leggi tutte le colonne necessarie
-    const range = `Risposte del modulo 1!${minColumn}:${maxColumn}`;
+    const range = `Check Ingressi!${minColumn}:${maxColumn}`;
 
     // Leggi i dati dal foglio
     const response = await sheets.spreadsheets.values.get({
@@ -177,7 +177,7 @@ export default async function handler(
     const newEntriesCount = currentEntries + 1;
 
     // Aggiorna il valore nel foglio (riga foundRowIndex + 1 perché le righe in Google Sheets iniziano da 1, non da 0)
-    const updateRange = `Risposte del modulo 1!${ingressiColumn}${foundRowIndex + 1}`;
+    const updateRange = `Check Ingressi!${ingressiColumn}${foundRowIndex + 1}`;
 
     console.log('Debug info:', {
       foundRowIndex,
