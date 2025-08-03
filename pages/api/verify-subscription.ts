@@ -95,7 +95,7 @@ export default async function handler(
     if (tesseraColumnIndex === -1) {
       return res.status(500).json({
         success: false,
-        message: '🌊 Colonna "Scegli la tua modalità di tesseramento" non trovata nel foglio. Contatta l\'amministratore! 🌊',
+        message: '🌊 Colonna "Tipo Tes" non trovata nel foglio. Contatta l\'amministratore! 🌊',
         isMember: false
       });
     }
