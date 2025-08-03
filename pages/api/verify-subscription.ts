@@ -73,7 +73,7 @@ export default async function handler(
       header && header.toString().toLowerCase().includes('ingressi')
     );
     const tesseraColumnIndex = headers.findIndex((header: string) =>
-      header && header.toString().toLowerCase().includes('Tipo Tes')
+      header && header.toString().toLowerCase().includes('tipo tes')
     );
 
     if (uuidColumnIndex === -1) {
