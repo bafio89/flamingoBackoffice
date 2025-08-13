@@ -2,13 +2,11 @@ import { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
-import { useAuth } from '../hooks/useAuth';
 
 export default function Home() {
   const [id, setId] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { logout } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,13 +89,10 @@ export default function Home() {
 
           <div className="footer">
             <p>🌺 Ride the wave with style! 🌺</p>
-            <div className="logout-section">
-              <button
-                onClick={logout}
-                className="logout-btn"
-              >
-                🚪 Logout
-              </button>
+            <div className="contact-info">
+              <small>
+                📧 info@flamingosurfclub.it | 📱 +39 123 456 7890
+              </small>
             </div>
           </div>
         </div>
@@ -306,32 +301,6 @@ export default function Home() {
           .contact-info {
             color: #adb5bd;
             font-size: 12px;
-          }
-
-          .logout-section {
-            margin-top: 20px;
-            text-align: center;
-            border-top: 1px solid #e9ecef;
-            padding-top: 20px;
-          }
-
-          .logout-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-          }
-
-          .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
-            background: #c82333;
           }
 
           @media (max-width: 480px) {

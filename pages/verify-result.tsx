@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../components/Layout';
-import { useAuth } from '../hooks/useAuth';
 
 interface VerificationResult {
   success: boolean;
@@ -18,7 +17,6 @@ export default function VerifyResult() {
   const { id } = router.query;
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [loading, setLoading] = useState(true);
-  const { logout } = useAuth();
 
   // Funzione per convertire **testo** in <strong>testo</strong>
   const formatMessage = (message: string) => {
@@ -137,15 +135,6 @@ export default function VerifyResult() {
                 🏄‍♀️ Area Soci
               </a>
             )}
-
-            <div className="logout-section">
-              <button
-                onClick={logout}
-                className="logout-btn"
-              >
-                🚪 Logout
-              </button>
-            </div>
           </div>
         </div>
 
@@ -382,33 +371,6 @@ export default function VerifyResult() {
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
-          }
-
-          .logout-section {
-            width: 100%;
-            margin-top: 15px;
-            text-align: center;
-            border-top: 1px solid #e9ecef;
-            padding-top: 15px;
-          }
-
-          .logout-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-          }
-
-          .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
-            background: #c82333;
           }
 
           @keyframes spin {
