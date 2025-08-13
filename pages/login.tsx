@@ -1,29 +1,48 @@
 import { useState } from 'react';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
-import Layout from '../components/Layout';
-import { useAuth } from '../hooks/useAuth';
+import Head from 'next/head';
 
-export default function Home() {
-  const [id, setId] = useState('');
+export default function Login() {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { logout } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id.trim()) return;
-
     setLoading(true);
-    // Reindirizza alla pagina di risultati
-    router.push(`/verify-result?id=${encodeURIComponent(id.trim())}`);
+    setError('');
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Reindirizza alla pagina richiesta o alla home
+        const returnTo = router.query.returnTo as string || '/';
+        router.push(returnTo);
+      } else {
+        setError(data.message || 'Password non corretta');
+      }
+    } catch (err) {
+      setError('Errore di connessione');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Layout title="Flamingo Surf Club - Verifica Iscrizione">
+    <>
       <Head>
-        <title>Flamingo Surf Club - Verifica Iscrizione</title>
-        <meta name="description" content="Verifica la tua iscrizione al Flamingo Surf Club" />
+        <title>Accesso - Flamingo Surf Club Backoffice</title>
+        <meta name="description" content="Accesso al backoffice Flamingo Surf Club" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦩</text></svg>" />
       </Head>
@@ -33,40 +52,47 @@ export default function Home() {
           <div className="header">
             <div className="logo">🦩</div>
             <h1>Flamingo Surf Club</h1>
-            <p>Verifica la tua iscrizione</p>
-            <div className="wave-decoration">🌊🏄‍♀️🌊</div>
+            <p>Backoffice - Accesso Riservato</p>
+            <div className="wave-decoration">🌊🔒🌊</div>
           </div>
 
           <form onSubmit={handleSubmit} className="form">
             <div className="input-group">
-              <label htmlFor="id">Inserisci il tuo ID Socio:</label>
+              <label htmlFor="password">Password di accesso:</label>
               <input
-                id="id"
-                type="text"
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                placeholder="Es: FL001234"
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Inserisci la password"
                 disabled={loading}
                 className="input"
+                required
               />
               <div className="input-hint">
-                💡 Trovi il tuo ID sulla tessera associativa
+                🔐 Inserisci la password per accedere al backoffice
               </div>
             </div>
 
+            {error && (
+              <div className="error-message">
+                ❌ {error}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={loading || !id.trim()}
+              disabled={loading || !password.trim()}
               className="button"
             >
               {loading ? (
                 <>
                   <span className="spinner"></span>
-                  Verificando...
+                  Accesso in corso...
                 </>
               ) : (
                 <>
-                  🔍 Verifica Iscrizione
+                  🚪 Accedi al Backoffice
                 </>
               )}
             </button>
@@ -74,30 +100,27 @@ export default function Home() {
 
           <div className="info-cards">
             <div className="info-card">
-              <div className="info-icon">🌺</div>
+              <div className="info-icon">🔒</div>
               <div className="info-text">
-                <strong>Soci Attivi</strong>
-                <p>Accesso completo alle attività</p>
+                <strong>Area Riservata</strong>
+                <p>Accesso solo per staff autorizzato</p>
               </div>
             </div>
             <div className="info-card">
-              <div className="info-icon">🏄‍♀️</div>
+              <div className="info-icon">🦩</div>
               <div className="info-text">
-                <strong>Lezioni Surf</strong>
-                <p>Per chi fa il bravo</p>
+                <strong>Gestione Soci</strong>
+                <p>Sistema di verifica iscrizioni</p>
               </div>
             </div>
           </div>
 
           <div className="footer">
-            <p>🌺 Ride the wave with style! 🌺</p>
-            <div className="logout-section">
-              <button
-                onClick={logout}
-                className="logout-btn"
-              >
-                🚪 Logout
-              </button>
+            <p>🌺 Flamingo Surf Club Backoffice 🌺</p>
+            <div className="contact-info">
+              <small>
+                Sistema di gestione interno
+              </small>
             </div>
           </div>
         </div>
@@ -186,7 +209,6 @@ export default function Home() {
             transition: all 0.3s ease;
             box-sizing: border-box;
             text-align: center;
-            font-family: 'Courier New', monospace;
           }
 
           .input:focus {
@@ -207,6 +229,18 @@ export default function Home() {
             color: #6c757d;
             text-align: center;
             font-style: italic;
+          }
+
+          .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            border-left: 4px solid #dc3545;
           }
 
           .button {
@@ -308,32 +342,6 @@ export default function Home() {
             font-size: 12px;
           }
 
-          .logout-section {
-            margin-top: 20px;
-            text-align: center;
-            border-top: 1px solid #e9ecef;
-            padding-top: 20px;
-          }
-
-          .logout-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-          }
-
-          .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
-            background: #c82333;
-          }
-
           @media (max-width: 480px) {
             .container {
               padding: 15px;
@@ -378,6 +386,6 @@ export default function Home() {
           }
         `}</style>
       </div>
-    </Layout>
+    </>
   );
 }

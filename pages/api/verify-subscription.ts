@@ -214,7 +214,7 @@ export default async function handler(
 
     return res.status(200).json({
       success: true,
-      message: `🌺 Ottimo! Sei un socio attivo del nostro surf club! 🏄‍♀️ Questo è il tuo ingresso #${newEntriesCount}!${newEntriesCount > 1 ? ' ⚠️' : ''}`,
+      message: `🌺 Ottimo! Sei un socio attivo del nostro surf club! 🏄‍♀️ **Questo è il tuo ingresso #${newEntriesCount}!**${newEntriesCount > 1 ? ' ⚠️' : ''}`,
       isMember: true,
       entriesCount: newEntriesCount,
       tesseraType: tesseraType

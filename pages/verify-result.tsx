@@ -2,6 +2,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import Layout from '../components/Layout';
+import { useAuth } from '../hooks/useAuth';
 
 interface VerificationResult {
   success: boolean;
@@ -16,6 +18,12 @@ export default function VerifyResult() {
   const { id } = router.query;
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const { logout } = useAuth();
+
+  // Funzione per convertire **testo** in <strong>testo</strong>
+  const formatMessage = (message: string) => {
+    return message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  };
 
   useEffect(() => {
     // Aspetta che il router sia pronto prima di fare qualsiasi controllo
@@ -47,15 +55,17 @@ export default function VerifyResult() {
 
   if (loading) {
     return (
-      <div className="container">
-        <div className="card">
-          <div className="loading">
-            <div className="spinner"></div>
-            <p>🌊 Verificando il tuo ID...</p>
+      <Layout title="Verifica in corso...">
+        <div className="container">
+          <div className="card">
+            <div className="loading">
+              <div className="spinner"></div>
+              <p>🌊 Verificando il tuo ID...</p>
+            </div>
           </div>
+          <LoadingStyles />
         </div>
-        <LoadingStyles />
-      </div>
+      </Layout>
     );
   }
 
@@ -64,9 +74,10 @@ export default function VerifyResult() {
   }
 
   return (
-    <>
+    <Layout title="Risultato Verifica - Flamingo Surf Club">
       <Head>
         <title>Risultato Verifica - Flamingo Surf Club</title>
+        <meta name="description" content="Risultato della verifica iscrizione" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦩</text></svg>" />
       </Head>
@@ -80,12 +91,6 @@ export default function VerifyResult() {
             <p>Risultato Verifica Iscrizione</p>
           </div>
 
-          {/* ID verificato */}
-          <div className="id-section">
-            <div className="id-label">ID Verificato:</div>
-            <div className="id-value">{id}</div>
-          </div>
-
           {/* Risultato principale */}
           <div className={`result-section ${result.isMember ? 'success' : 'error'}`}>
             <div className="status-icon">
@@ -94,8 +99,9 @@ export default function VerifyResult() {
             <div className="status-title">
               {result.isMember ? 'Socio Verificato!' : 'Socio Non Trovato'}
             </div>
-            <div className="status-message">
-              {result.message}
+            <div className="status-message" dangerouslySetInnerHTML={{
+              __html: formatMessage(result.message)
+            }}>
             </div>
             {/* Tipo tessera per soci verificati */}
             {result.isMember && result.tesseraType && (
@@ -115,28 +121,11 @@ export default function VerifyResult() {
             )}
           </div>
 
-          {/* Informazioni aggiuntive */}
-          {result.isMember ? (
-            <div className="info-section success-info">
-              <h3>🌺 Benvenuto nel club! 🌺</h3>
-              <ul>
-                <li>✨ Accesso a tutte le attività del club</li>
-                <li>🏄‍♀️ Lezioni di surf incluse</li>
-                <li>🦩 Sconti su attrezzature</li>
-                <li>🌊 Eventi esclusivi per soci</li>
-              </ul>
-            </div>
-          ) : (
-            <div className="info-section error-info">
-              <h3>🦩 Come diventare socio 🦩</h3>
-              <ul>
-                <li>📞 Contatta la segreteria</li>
-                <li>📧 Invia una email per info</li>
-                <li>🌊 Vieni a trovarci in spiaggia</li>
-                <li>📱 Seguici sui social media</li>
-              </ul>
-            </div>
-          )}
+          {/* ID verificato */}
+          <div className="id-section">
+            <div className="id-label">ID Verificato:</div>
+            <div className="id-value">{id}</div>
+          </div>
 
           {/* Footer con azioni */}
           <div className="footer">
@@ -148,6 +137,15 @@ export default function VerifyResult() {
                 🏄‍♀️ Area Soci
               </a>
             )}
+
+            <div className="logout-section">
+              <button
+                onClick={logout}
+                className="logout-btn"
+              >
+                🚪 Logout
+              </button>
+            </div>
           </div>
         </div>
 
@@ -386,6 +384,33 @@ export default function VerifyResult() {
             margin: 0 auto 20px;
           }
 
+          .logout-section {
+            width: 100%;
+            margin-top: 15px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+            padding-top: 15px;
+          }
+
+          .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+          }
+
+          .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+            background: #c82333;
+          }
+
           @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -427,7 +452,7 @@ export default function VerifyResult() {
           }
         `}</style>
       </div>
-    </>
+    </Layout>
   );
 }
 
